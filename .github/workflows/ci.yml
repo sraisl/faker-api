@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: 
+      - main
+    
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+
+      - name: setup GoLang
+        uses: actions/setup-go@6.4.0
+        with:
+           go-version-file: 'go.mod'
+
+      - name: test
+        run: |
+          go mod tidy
+          go vet
+        
