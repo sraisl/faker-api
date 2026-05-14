@@ -26,13 +26,13 @@ type RandomNameOutput struct {
 	}
 }
 
-func main() {
+func newRouter() http.Handler {
 	// Create a new router & API.
 	router := chi.NewMux()
 	api := humachi.New(router, huma.DefaultConfig("My API", "1.0.0"))
 
 	// Register GET /greeting/{name} handler.
-	huma.Get(api, "/greeting/{name}", func(ctx context.Context, input *struct{
+	huma.Get(api, "/greeting/{name}", func(ctx context.Context, input *struct {
 		Name string `path:"name" maxLength:"30" example:"world" doc:"Name to greet"`
 	}) (*GreetingOutput, error) {
 		resp := &GreetingOutput{}
@@ -45,6 +45,12 @@ func main() {
 		resp.Body.Name = faker.FakeName()
 		return resp, nil
 	})
+
+	return router
+}
+
+func main() {
+	router := newRouter()
 
 	// Start the server!
 	http.ListenAndServe("127.0.0.1:8888", router)
