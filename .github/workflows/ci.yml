@@ -26,6 +26,26 @@ jobs:
           go mod tidy
           go vet -v ./... && echo "✅ go vet: No issues found." >> $GITHUB_STEP_SUMMARY || echo "❌ go vet: Issues found." >> $GITHUB_STEP_SUMMARY
           go test -v ./... && echo "✅ go test: All tests passed." >> $GITHUB_STEP_SUMMARY || echo "❌ go test: Some tests failed." >> $GITHUB_STEP_SUMMARY
+
+  coverage:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v6
+
+      - name: setup GoLang
+        uses: actions/setup-go@v6
+        with:
+           go-version-file: 'go.mod'
+           cache: true
+
+      - name: coverage
+        run: |
+          go mod tidy
+          go test -coverprofile=coverage.out ./... && echo "✅ Code coverage report generated." >> $GITHUB_STEP_SUMMARY || echo "❌ Failed to generate code coverage report." >> $GITHUB_STEP_SUMMARY
+          go tool cover -func=coverage.out | tee coverage.txt && echo "✅ Code coverage details:" >> $GITHUB_STEP_SUMMARY && cat coverage.txt >> $GITHUB_STEP_SUMMARY
         
   build:
     runs-on: ubuntu-latest
@@ -109,9 +129,9 @@ jobs:
       - name: Smoke test
         run: |
           if curl -s http://localhost:8888/greeting/Alice | grep "Hello, Alice!"; then
-            echo "✅ Smoke test passed."
+            echo "✅ Smoke test passed." >> $GITHUB_STEP_SUMMARY
           else
-            echo "❌ Smoke test failed."
+            echo "❌ Smoke test failed." >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
 
