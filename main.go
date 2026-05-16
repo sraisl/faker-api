@@ -27,6 +27,12 @@ type RandomNameOutput struct {
 	}
 }
 
+type healthStatus struct {
+	Body struct {
+		Status string `json:"status" example:"OK" doc:"Health status"`
+	}
+}
+
 func newRouter() http.Handler {
 	// Create a new router & API.
 	router := chi.NewMux()
@@ -44,6 +50,12 @@ func newRouter() http.Handler {
 	huma.Get(api, "/random-name", func(ctx context.Context, input *struct{}) (*RandomNameOutput, error) {
 		resp := &RandomNameOutput{}
 		resp.Body.Name = faker.FakeName()
+		return resp, nil
+	})
+
+	huma.Get(api, "/health", func(ctx context.Context, input *struct{}) (*healthStatus, error) {
+		resp := &healthStatus{}
+		resp.Body.Status = "OK"
 		return resp, nil
 	})
 
