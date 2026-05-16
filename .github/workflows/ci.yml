@@ -13,6 +13,13 @@ on:
     tags:
       - 'v*.*.*'
   pull_request:
+    branches:
+      - main
+    paths:
+      - '**.go'
+      - '**.mod'
+      - '**.sum'
+      - 'Dockerfile'
     
   workflow_dispatch:
 
