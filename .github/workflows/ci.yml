@@ -85,4 +85,4 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           push: true
-          tags: faker-api:${{ env.DOCKER_TAG }}
+          tags: ghcr.io/${{ github.repository_owner }}/faker-api:${{ env.DOCKER_TAG }}
