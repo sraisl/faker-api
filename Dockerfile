@@ -11,7 +11,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /out/faker-api .
 FROM debian:trixie-slim AS runtime
 
 RUN apt-get update \
-	&& apt-get install -y --no-install-recommends ca-certificates \
+	&& apt-get install -y --no-install-recommends ca-certificates=20250419 \
 	&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
