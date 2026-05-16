@@ -92,6 +92,9 @@ jobs:
     needs: docker-build
 
     steps:
+      - name: get docker tag env variable
+        run: echo "DOCKER_TAG=${{ needs.docker-build.outputs.DOCKER_TAG }}" >> $GITHUB_ENV
+
       - name: Pull Docker image
         run: |
           docker pull ghcr.io/${{ github.repository_owner }}/faker-api:${{ env.DOCKER_TAG }}
