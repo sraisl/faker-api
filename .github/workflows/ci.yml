@@ -223,3 +223,20 @@ jobs:
           tag_name: ${{ github.ref_name }}
           generate_release_notes: true
   
+  update-helm-chart:
+    name: Update Helm chart
+    needs:
+      - publish-image
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger helm-charts update
+        run: |
+          gh workflow run update-chart.yml \
+            --repo sraisl/helm-charts \
+            --ref main \
+            -f chart=faker-api \
+            -f app_version=${{ github.ref_name }}
+        env:
+          GH_TOKEN: ${{ secrets.HELM_CHARTS_TOKEN }}
