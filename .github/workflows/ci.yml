@@ -4,6 +4,11 @@ on:
   push:
     branches: 
       - main
+    paths:
+      - '**.go'
+      - '**.mod'
+      - '**.sum'
+      - 'Dockerfile'
     
   workflow_dispatch:
 
