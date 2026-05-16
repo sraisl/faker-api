@@ -36,7 +36,7 @@ type healthStatus struct {
 func newRouter() http.Handler {
 	// Create a new router & API.
 	router := chi.NewMux()
-	api := humachi.New(router, huma.DefaultConfig("My API", "1.0.0"))
+	api := humachi.New(router, huma.DefaultConfig("faker-api", "1.0.1"))
 
 	// Register GET /greeting/{name} handler.
 	huma.Get(api, "/greeting/{name}", func(ctx context.Context, input *struct {
