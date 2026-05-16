@@ -69,8 +69,10 @@ jobs:
       - name: set docker tag
         run: |
            if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "DOCKER_TAG=snapshot" >> $GITHUB_ENV else
+            echo "DOCKER_TAG=snapshot" >> $GITHUB_ENV
+            else
             echo "DOCKER_TAG=${{ github.sha }}" >> $GITHUB_ENV
+            fi
 
       - name: Build and push
         uses: docker/build-push-action@v7
