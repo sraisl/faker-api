@@ -54,6 +54,13 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v6
 
+      - name: Login to GHCR
+        uses: docker/login-action@v4.1.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v6
@@ -77,5 +84,5 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
-          push: false
+          push: true
           tags: faker-api:${{ env.DOCKER_TAG }}
