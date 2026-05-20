@@ -49,8 +49,8 @@ jobs:
       - name: test
         run: |
           go mod tidy
-          go vet -v ./... && echo "✅ go vet: No issues found." >> $GITHUB_STEP_SUMMARY || echo "❌ go vet: Issues found." >> $GITHUB_STEP_SUMMARY
-          go test -v ./... && echo "✅ go test: All tests passed." >> $GITHUB_STEP_SUMMARY || echo "❌ go test: Some tests failed." >> $GITHUB_STEP_SUMMARY
+          go vet -v ./... && echo "✅ go vet: No issues found." >> "$GITHUB_STEP_SUMMARY" || echo "❌ go vet: Issues found." >> "$GITHUB_STEP_SUMMARY"
+          go test -v ./... && echo "✅ go test: All tests passed." >> "$GITHUB_STEP_SUMMARY" || echo "❌ go test: Some tests failed." >> "$GITHUB_STEP_SUMMARY"
 
       - name: lint Dockerfile
         uses: hadolint/hadolint-action@v3.1.0
@@ -83,8 +83,8 @@ jobs:
       - name: coverage
         run: |
           go mod tidy
-          go test -coverprofile=coverage.out ./... && echo "✅ Code coverage report generated." >> $GITHUB_STEP_SUMMARY || echo "❌ Failed to generate code coverage report." >> $GITHUB_STEP_SUMMARY
-          go tool cover -func=coverage.out | tee coverage.txt && echo "✅ Code coverage details:" >> $GITHUB_STEP_SUMMARY && cat coverage.txt >> $GITHUB_STEP_SUMMARY
+          go test -coverprofile=coverage.out ./... && echo "✅ Code coverage report generated." >> "$GITHUB_STEP_SUMMARY" || echo "❌ Failed to generate code coverage report." >> "$GITHUB_STEP_SUMMARY"
+          go tool cover -func=coverage.out | tee coverage.txt && echo "✅ Code coverage details:" >> "$GITHUB_STEP_SUMMARY" && cat coverage.txt >> "$GITHUB_STEP_SUMMARY"
         
   build:
     runs-on: ubuntu-latest
@@ -147,15 +147,15 @@ jobs:
       - name: set docker tag
         id: set_docker_tag
         run: |
-          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            echo "DOCKER_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-            echo "docker_tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "DOCKER_TAG=snapshot" >> $GITHUB_ENV
-            echo "docker_tag=snapshot" >> $GITHUB_OUTPUT
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            echo "DOCKER_TAG=${GITHUB_REF#refs/tags/}" >> "$GITHUB_ENV"
+            echo "docker_tag=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+          elif [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+            echo "DOCKER_TAG=snapshot" >> "$GITHUB_ENV"
+            echo "docker_tag=snapshot" >> "$GITHUB_OUTPUT"
           else
-            echo "DOCKER_TAG=${{ github.sha }}" >> $GITHUB_ENV
-            echo "docker_tag=${{ github.sha }}" >> $GITHUB_OUTPUT
+            echo "DOCKER_TAG=${{ github.sha }}" >> "$GITHUB_ENV"
+            echo "docker_tag=${{ github.sha }}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Build and push
@@ -172,7 +172,7 @@ jobs:
     steps:
       - name: Pull Docker image
         run: |
-          docker pull ghcr.io/${{ github.repository_owner }}/faker-api:${{ needs.docker-build.outputs.DOCKER_TAG }}
+          docker pull "ghcr.io/${{ github.repository_owner }}/faker-api:${{ needs.docker-build.outputs.DOCKER_TAG }}"
 
       - name: Run container
         run: |
@@ -182,9 +182,9 @@ jobs:
       - name: Smoke test
         run: |
           if curl -s http://localhost:8888/greeting/Alice | grep "Hello, Alice!"; then
-            echo "✅ Smoke test passed." >> $GITHUB_STEP_SUMMARY
+            echo "✅ Smoke test passed." >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "❌ Smoke test failed." >> $GITHUB_STEP_SUMMARY
+            echo "❌ Smoke test failed." >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
 
@@ -226,7 +226,7 @@ jobs:
   update-helm-chart:
     name: Update Helm chart
     needs:
-      - publish-image
+      - docker-smoke-test
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
 
