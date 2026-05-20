@@ -28,6 +28,28 @@ func TestGreetingEndpoint(t *testing.T) {
 	}
 }
 
+func TestRandomEmailEndpoint(t *testing.T) {
+	router := newRouter()
+	req := httptest.NewRequest(http.MethodGet, "/random-email", nil)
+	rr := httptest.NewRecorder()
+
+	router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d", http.StatusOK, rr.Code)
+	}
+
+	var body map[string]string
+	if err := json.Unmarshal(rr.Body.Bytes(), &body); err != nil {
+		t.Fatalf("failed to unmarshal response: %v", err)
+	}
+
+	email, ok := body["email"]
+	if !ok || email == "" {
+		t.Fatal("expected non-empty email field in response")
+	}
+}
+
 func TestRandomNameEndpoint(t *testing.T) {
 	router := newRouter()
 	req := httptest.NewRequest(http.MethodGet, "/random-name", nil)
