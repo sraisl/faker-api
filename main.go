@@ -27,6 +27,12 @@ type RandomNameOutput struct {
 	}
 }
 
+type RandomEmailOutput struct {
+	Body struct {
+		Email string `json:"email" example:"yddzf@fxx.ru" doc:"Randomly generated email address"`
+	}
+}
+
 type healthStatus struct {
 	Body struct {
 		Status string `json:"status" example:"OK" doc:"Health status"`
@@ -50,6 +56,12 @@ func newRouter() http.Handler {
 	huma.Get(api, "/random-name", func(ctx context.Context, input *struct{}) (*RandomNameOutput, error) {
 		resp := &RandomNameOutput{}
 		resp.Body.Name = faker.FakeName()
+		return resp, nil
+	})
+
+	huma.Get(api, "/random-email", func(ctx context.Context, input *struct{}) (*RandomEmailOutput, error) {
+		resp := &RandomEmailOutput{}
+		resp.Body.Email = faker.FakeEmail()
 		return resp, nil
 	})
 

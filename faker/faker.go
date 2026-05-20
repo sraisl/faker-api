@@ -7,3 +7,7 @@ import (
 func FakeName() string {
 	return faker.Name()
 }
+
+func FakeEmail() string {
+	return faker.Email()
+}
