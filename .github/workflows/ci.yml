@@ -159,10 +159,16 @@ jobs:
           fi
 
       - name: Scan image
+        id: scan
         uses: anchore/scan-action@v7
         with:
           image: ghcr.io/${{ github.repository_owner }}/faker-api:${{ steps.set_docker_tag.outputs.docker_tag }}
           fail-build: false
+
+      - name: upload Anchore scan SARIF report
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
           
       - name: Build and push
         uses: docker/build-push-action@v7
