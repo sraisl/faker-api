@@ -15,7 +15,22 @@ jobs:
       image: semgrep/semgrep
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Run Semgrep
-        run: semgrep scan --config p/default --error
+      - name: Run Semgrep and write summary
+        shell: bash
+        run: |
+          set +e
+
+          {
+            echo "# Semgrep Scan"
+            echo
+            echo '```'
+            semgrep scan --config p/default --error
+            status=$?
+            echo '```'
+            echo
+            echo "**Exit Code:** $status"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          exit $status
