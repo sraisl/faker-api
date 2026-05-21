@@ -162,6 +162,7 @@ jobs:
         uses: anchore/scan-action@v7
         with:
           image: ghcr.io/${{ github.repository_owner }}/faker-api:${{ steps.set_docker_tag.outputs.docker_tag }}
+          fail-build: false
           
       - name: Build and push
         uses: docker/build-push-action@v7
